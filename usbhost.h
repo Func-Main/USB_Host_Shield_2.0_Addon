@@ -120,8 +120,8 @@ typedef SPi< P16, P18, P17, P10 > spi;
 typedef SPi< P14, P13, P12, P15 > spi;
 #elif defined(ARDUINO_ESP32S3_DEV)
 typedef SPi< P6, P7, P15, P12 > spi;
-#elif defined(ESP32)
-typedef SPi< P18, P23, P19, P5 > spi;
+// #elif defined(ESP32)
+// typedef SPi< P18, P23, P19, P5 > spi;
 #elif defined(ARDUINO_NRF52840_FEATHER)
 typedef SPi< P26, P25, P24, P5 > spi;
 #else
