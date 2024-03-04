@@ -1661,7 +1661,7 @@ MAKE_PIN(P13, 13); // MOSI
 MAKE_PIN(P14, 14); // SCK
 MAKE_PIN(P15, 15); // SS
 
-#elif defined(ESP32_DEV)
+#elif defined(ARDUINO_ESP32S3_DEV)
 
 // Workaround strict-aliasing warnings
 #ifdef pgm_read_word
