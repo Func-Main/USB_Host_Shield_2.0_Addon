@@ -104,6 +104,8 @@ public:
 #define MAKE_PIN(x) EVALUATING_PASTE(APPEND_, PIN(UNPAREN(x)))
 typedef SPi< MAKE_PIN(PIN_SPI_SCK), MAKE_PIN(PIN_SPI_MOSI), MAKE_PIN(PIN_SPI_MISO), MAKE_PIN(PIN_SPI_SS) > spi;
 #undef MAKE_PIN
+#elif defined(ARDUINO_ESP32S3_DEV)
+typedef SPi< P6, P7, P15, P12 > spi;
 #elif defined(__AVR_ATmega1280__) || (__AVR_ATmega2560__) || defined(__AVR_ATmega32U4__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__)
 typedef SPi< Pb1, Pb2, Pb3, Pb0 > spi;
 #elif  defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
@@ -118,10 +120,8 @@ typedef SPi< P76, P75, P74, P10 > spi;
 typedef SPi< P16, P18, P17, P10 > spi;
 #elif defined(ESP8266)
 typedef SPi< P14, P13, P12, P15 > spi;
-#elif defined(ARDUINO_ESP32S3_DEV)
-typedef SPi< P6, P7, P15, P12 > spi;
-// #elif defined(ESP32)
-// typedef SPi< P18, P23, P19, P5 > spi;
+#elif defined(ESP32)
+typedef SPi< P18, P23, P19, P5 > spi;
 #elif defined(ARDUINO_NRF52840_FEATHER)
 typedef SPi< P26, P25, P24, P5 > spi;
 #else
