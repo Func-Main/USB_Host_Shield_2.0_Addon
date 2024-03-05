@@ -4,7 +4,7 @@
 
 // Satisfy the IDE, which needs to see the include statment in the ino too.
 #ifdef dobogusinclude
-#include <spi4teensy3.h>
+//#include <spi4teensy3.h>
 #endif
 #include <SPI.h>
 
@@ -16,6 +16,9 @@ USB     Usb;
 //USBHub  Hub5(&Usb);
 //USBHub  Hub6(&Usb);
 //USBHub  Hub7(&Usb);
+
+// Global variable to store the last USB task state
+int lastUsbTaskState = -1; // Initialize to an invalid state to ensure the comparison triggers on the first run
 
 void PrintAllAddresses(UsbDevice *pdev)
 {
@@ -49,13 +52,19 @@ void PrintAddress(uint8_t addr)
 void setup()
 {
   Serial.begin( 115200 );
+  pinMode(10, OUTPUT);
+  digitalWrite(10, HIGH);
+  
 #if !defined(__MIPSEL__)
   while (!Serial); // Wait for serial port to connect - used on Leonardo, Teensy and other boards with built-in USB CDC serial connection
 #endif
   Serial.println("Start");
 
-  if (Usb.Init() == -1)
+  if (Usb.Init() == -1) {
     Serial.println("OSC did not start.");
+  } else {
+    Serial.println("OSC DID start.");
+  }
 
   delay( 200 );
 }
@@ -95,23 +104,39 @@ void PrintAllDescriptors(UsbDevice *pdev)
   PrintDescriptors( pdev->address.devAddress );
 }
 
-void loop()
-{
-  Usb.Task();
+void loop() {
+  Usb.Task(); // Perform USB task
 
-  if ( Usb.getUsbTaskState() == USB_STATE_RUNNING )
-  {
-    Usb.ForEachUsbDevice(&PrintAllDescriptors);
-    Usb.ForEachUsbDevice(&PrintAllAddresses);
+  // Get the current USB task state
+  int currentUsbTaskState = Usb.getUsbTaskState();
 
-    while ( 1 ) { // stop
+  // Check if the USB task state has changed since the last loop iteration
+  if (currentUsbTaskState != lastUsbTaskState) {
+    // State has changed, update the last known state
+    lastUsbTaskState = currentUsbTaskState;
+
+    // Print the new state for debugging purposes
+    Serial.print("USB Task State changed to: ");
+    Serial.println(currentUsbTaskState);
+
+    // Additional logic to handle the USB_STATE_RUNNING state
+    if (currentUsbTaskState == USB_STATE_RUNNING) {
+      Usb.ForEachUsbDevice(&PrintAllDescriptors);
+      Usb.ForEachUsbDevice(&PrintAllAddresses);
+
+      // Infinite loop to stop further execution
+      while (1) {
 #ifdef ESP8266
-        yield(); // needed in order to reset the watchdog timer on the ESP8266
+        yield(); // ESP8266 specific: reset the watchdog timer to prevent a reset
 #endif
+      }
     }
   }
+  // If the state is not USB_STATE_RUNNING and has not changed, do nothing specific here
+  else if (currentUsbTaskState != USB_STATE_RUNNING) {
+    // Optionally, handle repetitive non-USB_STATE_RUNNING states if needed
+  }
 }
-
 uint8_t getdevdescr( uint8_t addr, uint8_t &num_conf )
 {
   USB_DEVICE_DESCRIPTOR buf;
