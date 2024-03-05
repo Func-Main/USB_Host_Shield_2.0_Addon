@@ -1695,9 +1695,9 @@ MAKE_PIN(P15, 15); // SS
 })
 
 // Pinout for ESP32 dev module
-MAKE_PIN(P15, 15); // MISO
-MAKE_PIN(P7, 7); // MOSI
 MAKE_PIN(P6, 6); // SCK
+MAKE_PIN(P7, 7); // MOSI
+MAKE_PIN(P15, 15); // MISO
 MAKE_PIN(P12, 12); // SS / CS
 MAKE_PIN(P13, 13); // INT
 
